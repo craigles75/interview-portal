@@ -1,0 +1,28 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+
+.ta-editor {
+    min-height: 300px;
+    height: auto;
+    overflow: auto;
+    font-family: inherit;
+    font-size: 100%;
+    margin:20px 0;
+}
+
+.interview-note {
+	display:inline-block; 
+	min-height:100px; 
+	background-color: #e0ffff;
+	border-style: solid;
+  border-width: 1px;
+  width: 100%;
+}

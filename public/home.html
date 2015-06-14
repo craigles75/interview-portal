@@ -1,0 +1,19 @@
+
+	<h3>Candidates</h3>
+	<div ng-repeat="post in main.posts | orderBy: '-upvotes'">
+		<span style="font-size:20px; margin-left:10px;">
+			<a href="#/posts/{{ post._id }}">
+				{{ post.name }}
+			</a>
+		</span>
+		- {{ post.upvotes }} recommendations to hire ({{ post.__v }} reviews)
+	</div>
+
+
+<form ng-submit="main.addPost()" style="margin-top:30px;" ng-show="main.isLoggedIn()">
+	<h3>Add a new candidate</h3>
+	<div class="form-group">
+		<input type="text" class="form-control" placeholder="Name" ng-model="main.name">
+	</div>
+	<button type="submit" class="btn btn-primary">Create Candidate</button>
+</form>

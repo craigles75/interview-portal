@@ -1,0 +1,181 @@
+<div class="page-header">
+  <h3>Candidate - {{posts.post.name}} </h3>
+</div>
+
+<div ng-hide="posts.isLoggedIn()">
+  <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can add a post.</h3>
+</div>
+
+<tabset justified="true" ng-show="posts.isLoggedIn()">
+  <tab heading="Interview Notes" active="posts.activateTab">
+
+    
+    <div class="row">
+      <h4>Interviews</h4>
+      <div class="btn-group" dropdown>
+        <button type="button" class="btn">Order By</button>
+        <button type="button" class="btn dropdown-toggle" dropdown-toggle>
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+          <li><a href="#" ng-click="posts.setOrder('-hire')">Recommended to Hire</a></li>
+          <li><a href="#" ng-click="posts.setOrder('date')">Earliest Interview</a></li>
+          <li><a href="#" ng-click="posts.setOrder('-date')">Most Recent Interview</a></li>
+          <li><a href="#" ng-click="posts.setOrder('-overallRating')">Overall Rating</a></li>
+          <li><a href="#" ng-click="posts.setOrder('-cultureRating')">Cultural Fit</a></li>
+          <li><a href="#" ng-click="posts.setOrder('-knowledgeRating')">Knowledge</a></li>
+          <li><a href="#" ng-click="posts.setOrder('-leadershipRating')">Leadership Skills</a></li>
+          <li><a href="#" ng-click="posts.setOrder('author')">Interviewer</a></li>
+        </ul>
+      </div>
+      <div class="spacer" style="min-height:25px;"></div>
+    </div>
+<div ng-repeat="interview in posts.post.interviews |  object2Array | orderBy:posts.orderBy">
+  <div class="container-fluid interview-note" ng-style="interview.hire == 'Yay' && {'background-color': '#CCFFCC'} ||
+                  interview.hire == 'Nay' && {'background-color': '#FF9999'}">
+    <div class="row">
+      {{interview.date | date:'fullDate'}} - by <i>{{interview.author}}</i>
+    </div>
+    <div class="row">
+      <strong>Recommend to hire - {{interview.hire}}</strong>
+      <hr>
+    </div>
+    <div ng-show="interview.goodAnswers">
+    <div class="row">
+      <strong>What they Answered Well</strong>
+      <div bind-html-unsafe="interview.goodAnswers"></div>
+    </div>
+    </div>
+    <div ng-show="interview.badAnswers">
+    <div class="row">
+      <strong>What they Answered Poorly</strong>
+      <div bind-html-unsafe="interview.badAnswers"></div>
+    </div>
+    </div>
+    <div ng-show="interview.body">
+    <div class="row">
+      <strong>Other Comments</strong>
+      <div bind-html-unsafe="interview.body"></div>
+    </div>
+    </div>
+    <div class="row">
+      <div ng-show="interview.overallRating">
+        <strong>Overall rating</strong> is {{interview.overallRating}} out of {{interview.maxRating}}
+      </div>
+    </div>
+    <div class="row">
+      <div ng-show="interview.cultureRating">
+        <strong>Cultural Fit</strong> is rated {{interview.cultureRating}} out of {{interview.maxRating}}
+      </div>
+    </div>
+    <div class="row">
+      <div ng-show="interview.knowledgeRating">
+        <strong>Knowledge</strong> is rated {{interview.knowledgeRating}} out of {{interview.maxRating}}
+      </div>
+    </div>
+    <div class="row">
+      <div ng-show="interview.leadershipRating">
+        <strong>Leadership skills</strong> are rated {{interview.leadershipRating}} out of {{interview.maxRating}}
+      </div>
+    </div>
+  </div>  
+  <div class="spacer" style="min-height:25px;"></div>
+</div>
+
+<!--
+Comments
+<div ng-repeat="comment in posts.post.comments | orderBy:'-upvotes'">
+  <span class="glyphicon glyphicon-thumbs-up" ng-click="posts.incrementUpvotes(comment)"></span>
+    {{comment.upvotes}} - by {{comment.author}}
+  <span style="font-size:20px; margin-left:10px;">
+    {{comment.body}}
+  </span>
+</div>
+-->
+
+  </tab>
+
+  <tab heading="Add an Interview">
+      
+    <div class="container-fluid">
+      <form ng-submit="posts.addInterview()" style="margin-top:30px;" ng-show="posts.isLoggedIn()">
+        <h3>Add a new interview</h3>
+        <div class="row">
+          <div class="col-md-6">
+            <h4>Interview Date</h4>
+            <div style="display:inline-block; min-height:290px;">
+              <datepicker ng-model="posts.dt" max-date="posts.maxDate" class="well well-sm" show-weeks=false></datepicker>
+            </div>
+            <div class="row">
+              <h4>Overall Rating</h4>
+              <rating ng-model="posts.overallRating" max="posts.maxRating" readonly="posts.isRatingReadonly" on-hover="posts.ratingHoveringOver(value)" on-leave="overStar = null"></rating>
+              <span class="label" ng-class="{'label-warning': posts.ratingPercent<30, 'label-info': posts.ratingPercent>=30 && posts.ratingPercent<70, 'label-success': posts.ratingPercent>=70}" ng-show="posts.overStar && !posts.isRatingReadonly">{{posts.ratingPercent}}%</span>
+            </div>
+            <div class="row">
+              <h4>Cultural Fit</h4>
+              <rating ng-model="posts.cultureRating" max="posts.maxRating" readonly="posts.isRatingReadonly" on-hover="posts.ratingHoveringOver(value)" on-leave="overStar = null"></rating>
+              <span class="label" ng-class="{'label-warning': posts.ratingPercent<30, 'label-info': posts.ratingPercent>=30 && posts.ratingPercent<70, 'label-success': posts.ratingPercent>=70}" ng-show="posts.overStar && !posts.isRatingReadonly">{{posts.ratingPercent}}%</span>
+            </div>
+            <div class="row">
+              <h4>Knowledge</h4>
+              <rating ng-model="posts.knowledgeRating" max="posts.maxRating" readonly="posts.isRatingReadonly" on-hover="posts.ratingHoveringOver(value)" on-leave="overStar = null"></rating>
+              <span class="label" ng-class="{'label-warning': posts.ratingPercent<30, 'label-info': posts.ratingPercent>=30 && posts.ratingPercent<70, 'label-success': posts.ratingPercent>=70}" ng-show="posts.overStar && !posts.isRatingReadonly">{{posts.ratingPercent}}%</span>
+            </div>
+            <div class="row">
+              <h4>Leadership Skills</h4>
+              <rating ng-model="posts.leadershipRating" max="posts.maxRating" readonly="posts.isRatingReadonly" on-hover="posts.ratingHoveringOver(value)" on-leave="overStar = null"></rating>
+              <span class="label" ng-class="{'label-warning': posts.ratingPercent<30, 'label-info': posts.ratingPercent>=30 && posts.ratingPercent<70, 'label-success': posts.ratingPercent>=70}" ng-show="posts.overStar && !posts.isRatingReadonly">{{posts.ratingPercent}}%</span>
+            </div>
+            <div class="row">
+              <h4>Recommend to Hire?</h4>
+              <div class="btn-group">
+                <label class="btn btn-success" ng-model="posts.hire" btn-radio="'Yay'" uncheckable>Yay</label>
+                <label class="btn btn-danger" ng-model="posts.hire" btn-radio="'Nay'" uncheckable>Nay</label>
+              </div>
+            </div>
+            
+          </div>
+          <div class="col-md-6">
+            <div class="row">
+              <h4>What did they answer well?</h4>
+             <!-- <wysiwyg textarea-id="question" textarea-class="form-control"  textarea-height="80px" textarea-name="textareaQuestion" ng-model="posts.interviewBody1" textarea-menu="posts.customWYSIWYGMenu"></wysiwyg> -->
+              <div text-angular ng-model="posts.interviewGoodAnswers" ta-toolbar="posts.customWYSIWYGMenu"></div>
+            </div>
+            <div class="row">
+              <h4>What did they answer poorly?</h4>
+             <!-- <wysiwyg textarea-id="question" textarea-class="form-control"  textarea-height="80px" textarea-name="textareaQuestion" ng-model="posts.interviewBody1" textarea-menu="posts.customWYSIWYGMenu"></wysiwyg> -->
+              <div text-angular ng-model="posts.interviewBadAnswers" ta-toolbar="posts.customWYSIWYGMenu"></div>
+            </div>
+            <div class="row">
+              <h4>Other Comments</h4>
+             <!-- <wysiwyg textarea-id="question" textarea-class="form-control"  textarea-height="80px" textarea-name="textareaQuestion" ng-model="posts.interviewBody1" textarea-menu="posts.customWYSIWYGMenu"></wysiwyg> -->
+              <div text-angular ng-model="posts.interviewBody" ta-toolbar="posts.customWYSIWYGMenu"></div>
+            </div>
+            
+          </div>
+    </div>
+  
+    <div class="row">
+      <div class="col-md-6">
+        <button type="submit" class="btn btn-primary">Post</button>
+      </div>
+    </div>  
+  </form>
+</div>
+
+<!--
+<form ng-submit="posts.addComment()" style="margin-top:30px;" ng-show="posts.isLoggedIn()">
+  <h3>Add a new comment</h3>
+  <div class="form-group">
+    <input type="text" class="form-control" placeholder="Comment" ng-model="posts.body">
+  </div>
+  <button type="submit" class="btn btn-primary">Post</button>
+</form>
+
+-->
+
+    </tab>
+</tabset>
+
+
+
